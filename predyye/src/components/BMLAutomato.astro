@@ -1,0 +1,217 @@
+---
+// BMLAutomato.astro
+---
+
+<canvas id="bml-canvas" style="border: 1px solid #333; max-width: 100%; height: auto; background: #001F3F;"></canvas>
+
+<script>
+  // Declaraciones de tipos para TypeScript
+  declare global {
+    interface HTMLCanvasElement {
+      bmlAutomaton?: BMLAutomaton;
+    }
+  }
+
+  interface BMLAutomatonProps {
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    isRunning: boolean;
+    iteration: number;
+    animationId: number | null;
+    grid: number[][];
+    readonly ROWS: number;
+    readonly COLS: number;
+    readonly EMPTY_PERCENTAGE: number;
+    readonly MAX_ITERATIONS: number;
+    readonly CELL_SIZE: number;
+    readonly backgroundColor: string;
+    readonly RED_COLOR: string;
+    readonly BLUE_COLOR: string;
+    readonly EMPTY: number;
+    readonly RED: number;
+    readonly BLUE: number;
+  }
+
+  class BMLAutomaton implements BMLAutomatonProps {
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    isRunning: boolean;
+    iteration: number;
+    animationId: number | null;
+    grid: number[][];
+
+    readonly ROWS: number = 50;
+    readonly COLS: number = 350;
+    readonly EMPTY_PERCENTAGE: number = 60;
+    readonly MAX_ITERATIONS: number = 1800;
+    readonly CELL_SIZE: number = 2;
+    
+    readonly backgroundColor: string = '#001F3F';
+    readonly RED_COLOR: string = '#EAD8B1';
+    readonly BLUE_COLOR: string = '#626F47';
+
+    private lastFrameTime: number = 0;
+    private frameInterval: number = 1000 / 24; // frames per second
+
+    readonly EMPTY: number = 0;
+    readonly RED: number = 1;
+    readonly BLUE: number = 2;
+
+    constructor(canvasId: string) {
+      const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+      if (!canvas) {
+        throw new Error(`Canvas with id "${canvasId}" not found`);
+      }
+      
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('Could not get 2D context from canvas');
+      }
+
+      this.canvas = canvas;
+      this.ctx = ctx;
+      this.isRunning = true;
+      this.iteration = 0;
+      this.animationId = null;
+      this.grid = [];
+
+      this.init();
+    }
+
+    init(): void {
+      this.canvas.width = this.COLS * this.CELL_SIZE;
+      this.canvas.height = this.ROWS * this.CELL_SIZE;
+      this.grid = this.initializeGrid();
+      this.drawGrid();
+      this.animate();
+    }
+
+    initializeGrid(): number[][] {
+      const grid: number[][] = Array(this.ROWS).fill(null).map(() => Array(this.COLS).fill(this.EMPTY));
+      const totalCells = this.ROWS * this.COLS;
+      const emptyCells = Math.floor(totalCells * this.EMPTY_PERCENTAGE / 100);
+      const filledCells = totalCells - emptyCells;
+      const redCells = Math.floor(filledCells / 2);
+      const blueCells = filledCells - redCells;
+      
+      // Colocar celdas al azar
+      let cellsToFill = filledCells;
+      
+      while (cellsToFill > 0) {
+        const row = Math.floor(Math.random() * this.ROWS);
+        const col = Math.floor(Math.random() * this.COLS);
+        
+        if (grid[row][col] === this.EMPTY) {
+          if (cellsToFill > blueCells) {
+            grid[row][col] = this.RED;
+          } else {
+            grid[row][col] = this.BLUE;
+          }
+          cellsToFill--;
+        }
+      }
+      
+      return grid;
+    }
+
+    updateGrid(): void {
+      const newGrid: number[][] = this.grid.map((row: number[]) => [...row]);
+      
+      // Mover celdas rojas (primero hacia abajo)
+      for (let row = 0; row < this.ROWS; row++) {
+        for (let col = 0; col < this.COLS; col++) {
+          if (this.grid[row][col] === this.RED) {
+            const nextRow = (row + 1) % this.ROWS;
+            if (this.grid[nextRow][col] === this.EMPTY) {
+              newGrid[row][col] = this.EMPTY;
+              newGrid[nextRow][col] = this.RED;
+            }
+          }
+        }
+      }
+      
+      const tempGrid: number[][] = newGrid.map((row: number[]) => [...row]);
+      
+      // Mover celdas azules (después hacia la derecha)
+      for (let row = 0; row < this.ROWS; row++) {
+        for (let col = 0; col < this.COLS; col++) {
+          if (tempGrid[row][col] === this.BLUE) {
+            const nextCol = (col + 1) % this.COLS;
+            if (tempGrid[row][nextCol] === this.EMPTY) {
+              newGrid[row][col] = this.EMPTY;
+              newGrid[row][nextCol] = this.BLUE;
+            }
+          }
+        }
+      }
+      
+      this.grid = newGrid;
+    }
+
+    drawGrid(): void {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      
+      for (let row = 0; row < this.ROWS; row++) {
+        for (let col = 0; col < this.COLS; col++) {
+          const cellValue = this.grid[row][col];
+          
+          if (cellValue !== this.EMPTY) {
+            this.ctx.fillStyle = cellValue === this.RED ? this.RED_COLOR : this.BLUE_COLOR;
+            this.ctx.fillRect(col * this.CELL_SIZE, row * this.CELL_SIZE, this.CELL_SIZE, this.CELL_SIZE);
+          }
+        }
+      }
+    }
+
+    animate(currentTime: number = performance.now()): void {
+      if (!this.isRunning) return;
+
+      const elapsed = currentTime - this.lastFrameTime;
+
+      if (elapsed >= this.frameInterval) {
+        this.updateGrid();
+        this.drawGrid();
+        if (this.iteration < this.MAX_ITERATIONS) {
+          this.iteration++;
+        }
+        this.lastFrameTime = currentTime;
+      }
+
+      this.animationId = requestAnimationFrame((time) => this.animate(time));
+    }
+
+    stop(): void {
+      this.isRunning = false;
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+    }
+
+    restart(): void {
+      this.stop();
+      this.iteration = 0;
+      this.isRunning = true;
+      this.grid = this.initializeGrid();
+      this.drawGrid();
+      this.animate();
+    }
+  }
+
+  // Inicializar cuando el DOM esté listo
+  document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si el canvas existe antes de inicializar
+    const canvas = document.getElementById('bml-canvas') as HTMLCanvasElement;
+    if (canvas) {
+      const automaton = new BMLAutomaton('bml-canvas');
+      canvas.bmlAutomaton = automaton;
+    }
+  });
+
+  // Limpiar animación al salir de la página
+  window.addEventListener('beforeunload', function() {
+    const canvas = document.getElementById('bml-canvas') as HTMLCanvasElement;
+    if (canvas && canvas.bmlAutomaton) {
+      canvas.bmlAutomaton.stop();
+    }
+  });
+</script>

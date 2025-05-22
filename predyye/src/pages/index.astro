@@ -1,0 +1,53 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AboutSection from '../components/AboutSection.astro';
+import SkillsSection from '../components/SkillsSection.astro';
+import ProjectsSection from '../components/ProjectsSection.astro';
+---
+
+<Layout title="predyye">
+  <Header />
+  <main>
+    <div class="main-container">
+      <section id="main" class="general-section">
+        <AboutSection />
+        <SkillsSection />
+        <ProjectsSection />
+      </section>
+	  <Footer />
+    </div>
+  </main>
+</Layout>
+
+<script>
+  // Intersection Observer for animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '-50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+
+  // Observe all elements with fade-in-up class
+  document.addEventListener('DOMContentLoaded', () => {
+    const animatedElements = document.querySelectorAll('.fade-in-up');
+    animatedElements.forEach(el => observer.observe(el));
+  });
+
+  // Mobile detection
+  let isMobile = false;
+  const checkMobile = () => {
+    isMobile = window.innerWidth <= 767;
+  };
+  
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+</script>

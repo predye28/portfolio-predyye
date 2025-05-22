@@ -1,0 +1,60 @@
+---
+// Skills section component with skills data
+const skills = [
+  { name: "Python", icon: "/images/skills/python.png" },
+  { name: "React", icon: "/images/skills/react.png" },
+  { name: "MySQL", icon: "/images/skills/mysql.png" },
+  { name: "Figma", icon: "/images/skills/figma.png" },
+  { name: "Git", icon: "/images/skills/git.png" }
+];
+---
+
+<section id="skills" class="section">
+  <div class="section-spacing"></div>
+  
+  <div class="fade-in-up">
+    <h3 class="section-subtitle">Skills</h3>
+    <div class="underline"></div>
+  </div>
+  
+  <div class="skills-grid fade-in-up" id="skills-grid">
+    {skills.map((skill) => (
+      <div class="skill-card">
+        <div class="skill-header">
+          <img
+            src={skill.icon}
+            alt={`${skill.name} icon`}
+            class="skill-icon"
+            width="32"
+            height="32"
+            loading="lazy"
+            id={`skill-icon-${skill.name.toLowerCase()}`}
+          />
+          <span class="skill-name">{skill.name}</span>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  // Handle mobile responsive skill icons visibility
+  document.addEventListener('DOMContentLoaded', function() {
+    const skillIcons = document.querySelectorAll('.skill-icon');
+    
+    const handleResize = () => {
+      const isMobile = window.innerWidth <= 480;
+      skillIcons.forEach(icon => {
+        if (icon) {
+          icon.style.display = isMobile ? 'none' : 'block';
+        }
+      });
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+  });
+</script>

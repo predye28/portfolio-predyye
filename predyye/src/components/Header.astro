@@ -1,0 +1,102 @@
+---
+// Import statements are not needed for images in Astro - they can be used directly
+---
+
+<header class="header">
+  <div class="main-container">
+    <nav class="nav">
+      <div class="nav-left" id="nav-left">
+        <a href="#about" class="nav-link-name smooth-scroll">
+          Omar Madrigal
+        </a>
+        <a href="#about" class="nav-link smooth-scroll">
+          About
+        </a>
+        <a href="#skills" class="nav-link smooth-scroll">
+          Skills
+        </a>
+        <a href="#projects" class="nav-link smooth-scroll">
+          Projects
+        </a>
+      </div>
+
+      <div class="nav-right">
+        <a href="mailto:omarmr14.02@gmail.com">
+          <img
+            src="/images/network/email.png"
+            alt="Email Icon"
+            class="social-icon-header"
+          />
+        </a>
+
+        <a
+          href="https://github.com/predye28"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="/images/network/github.png"
+            alt="github"
+            class="social-icon-header"
+          />
+        </a>
+        
+        <a
+          href="https://www.linkedin.com/in/omar-madrigal-rodriguez-b15416269/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="/images/network/linkedin.png"
+            alt="LinkedIn"
+            class="social-icon-header"
+          />
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Smooth scrolling functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mobile detection
+    let isMobile = window.innerWidth <= 767;
+    
+    const handleResize = () => {
+      isMobile = window.innerWidth <= 767;
+      const navLeft = document.getElementById('nav-left');
+      if (navLeft) {
+        navLeft.style.display = isMobile ? 'none' : 'flex';
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+
+    // Smooth scroll functionality
+    const smoothScrollLinks = document.querySelectorAll('.smooth-scroll');
+    
+    smoothScrollLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+          const headerHeight = 70; // Offset for fixed header
+          const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+          
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  });
+</script>
