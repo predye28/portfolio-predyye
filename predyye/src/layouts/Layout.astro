@@ -38,6 +38,7 @@ const { title } = Astro.props;
     --color-footer: #001F3F;
     --color-background: #001F3F;
     --color-backgroundProject: #002952;
+    --color-backgroundProjectDetail: #002c58;
     --font-base: 16px;
     --gap-small: 0.5rem;
     --gap-medium: 1rem;
@@ -109,8 +110,12 @@ const { title } = Astro.props;
     max-width: 300px;
     border-radius: 4%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-
+  .profile-image:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
   .highlight {
     color: var(--color-textWordEspecial);
     font-weight: 500;
@@ -130,7 +135,7 @@ const { title } = Astro.props;
   }
 
   .section-title {
-    font-size: 4rem;
+    font-size: 4.5rem;
     font-weight: 250;
     color: var(--color-textTitleAndSubtitle);
   }
@@ -140,7 +145,7 @@ const { title } = Astro.props;
   }
 
   .section-word {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 300;
     color: var(--color-text);
   }
@@ -324,7 +329,7 @@ const { title } = Astro.props;
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   }
-
+  
   .skill-header {
     display: flex;
     align-items: center;
@@ -369,15 +374,15 @@ const { title } = Astro.props;
     display: flex;
     flex-direction: column;
     position: relative;
-    transition: transform 0.3s ease, box-shadow 1s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
     text-align: left;
     color: var(--color-text);
     min-height: 250px;
   }
 
   .project-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    background-color: var(--color-backgroundProjectDetail) !important;
+    transform: translateY(-10px) !important;
   }
 
   .project-title {
@@ -495,6 +500,9 @@ const { title } = Astro.props;
   .section-title {
     font-size: 3.5rem;
   }
+  .section-word {
+    font-size: 1.6rem;
+  }
 }
 
 @media (max-width: 767px) {
@@ -592,7 +600,7 @@ const { title } = Astro.props;
   }
   
   .section-title {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
   }
   
   .section-subtitle {
