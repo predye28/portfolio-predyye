@@ -108,9 +108,12 @@ const { title } = Astro.props;
   .profile-image {
     width: 100%;
     max-width: 300px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     border-radius: 4%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: block;
   }
   .profile-image:hover {
     transform: translateY(-5px);
@@ -118,7 +121,7 @@ const { title } = Astro.props;
   }
   .highlight {
     color: var(--color-textWordEspecial);
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .underline {
@@ -475,7 +478,37 @@ const { title } = Astro.props;
     transition-delay: 0.1s;
   }
 
-  
+
+  /* Estilos para la animación de escritura*/
+
+  /* Cursor de la máquina de escribir */
+  .cursor {
+    display: inline-block;
+    background-color: var(--color-textTitleAndSubtitle);
+    margin-left: 1px;
+    width: 5px;
+    height: 1em;
+    vertical-align: baseline;
+  }
+
+  .cursor-animate {
+    animation: smooth-blink 1.06s infinite ease-in-out;
+  }
+
+  /* Animación CSS fluida */
+  @keyframes smooth-blink {
+    0%, 50% { 
+      opacity: 1; 
+    }
+    51%, 100% { 
+      opacity: 0; 
+    }
+  }
+  .section-title {
+    min-height: 1.2em;
+    position: relative;
+  }
+
 /* Media Queries */
 @media (min-width: 1024px) {
   /* .projects-grid {
@@ -582,10 +615,18 @@ const { title } = Astro.props;
   .section-spacingBig {
     margin-top: 8rem;
   }
+  .cursor {
+    width: 2px;
+    margin-left: 2px;
+  }
 }
 
 /* Small mobile devices */
 @media (max-width: 480px) {
+  .cursor {
+    width: 1.5px;
+    margin-left: 1px;
+  }
   .nav-right {
     gap: var(--gap-small);
   }

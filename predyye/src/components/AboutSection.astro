@@ -7,13 +7,16 @@ import BmlAutomaton from './BMLAutomato.astro'
   
   <div class="fade-in-up">
     <p class="line"></p>
-    <h1 class="section-title">Hi, <span class="highlight">Omar</span> here.</h1>
+    <h1 class="section-title">
+      <span id="typewriter-text"></span>
+      <span id="typewriter-cursor" class="cursor"></span>
+    </h1>
     <h2 class="section-word">I create things every day.</h2>
     <p class="line"></p>
   </div>
 
   <!-- BML Automaton placeholder - you can add your automaton component here -->
-  <div class="fade-in-up">
+  <div class="fade-in-up ">
     <!-- <BMLAutomaton /> -->
     <BmlAutomaton />
   </div>
@@ -28,27 +31,22 @@ import BmlAutomaton from './BMLAutomato.astro'
   <div class="about-container">
     <div class="about-image fade-in-up" id="about-image">
       <img
-        src="/images/perfil.jpeg"
+        src="/images/fotoperfil.jpeg"
         alt="Omar Madrigal"
         class="profile-image"
-        width="280"
-        height="320"
         loading="lazy"
       />
     </div>
     
     <div class="about-text fade-in-up">
       <p class="section-paragraph">
-        Hi! I'm Omar Madrigal, a final-year Computer Engineering student at
-        the <span class="highlight">Instituto Tecnológico de Costa Rica</span>, passionate about real-world
-        projects that create positive impacts through technology. I'm
-        especially interested in artificial intelligence and its potential
-        to drive meaningful change.
+        Hi! I'm Omar Madrigal, a Computer Engineering student in my final year at
+        the <span class="highlight">Instituto Tecnológico de Costa Rica</span>. I love building real-world
+        tech projects that make a difference — especially using AI to solve meaningful problems.
       </p>
       <p class="line"></p>
       <p class="section-paragraph">
-        Outside of academics, I enjoy drawing, weightlifting, exploring
-        nature, and spending quality time with family and friends.
+        Outside of tech, I enjoy drawing, working out, being in nature, and spending time with my loved ones.
       </p>
     </div>
   </div>
@@ -93,9 +91,8 @@ import BmlAutomaton from './BMLAutomato.astro'
     </div>
   </div>
 </section>
-
+<!-- Código JavaScript para tu componente Astro -->
 <script>
-  // Handle mobile responsive image visibility
   document.addEventListener('DOMContentLoaded', function() {
     const aboutImage = document.getElementById('about-image');
     
@@ -106,10 +103,63 @@ import BmlAutomaton from './BMLAutomato.astro'
       }
     };
 
-    // Set initial state
     handleResize();
-
-    // Add resize listener
     window.addEventListener('resize', handleResize);
+
+    // Typewriter effect mejorado
+    const text = "Hi, Omar here.";
+    const typewriterElement = document.getElementById('typewriter-text');
+    const cursor = document.getElementById('typewriter-cursor');
+    
+    let i = 1; // Empezar desde 1 para que la "H" ya esté visible
+    
+    // Configurar cursor inicial - la animación se maneja con CSS
+    if (cursor) {
+      cursor.style.display = 'inline-block';
+      cursor.classList.add('cursor-animate');
+    }
+
+    // Mostrar la "H" inicial antes de empezar la animación
+    if (typewriterElement) {
+      typewriterElement.innerHTML = 'H';
+    }
+
+    // Función de escritura más fluida
+    function typeWriter() {
+      if (!typewriterElement) return;
+
+      if (i < text.length) {
+        const currentText = text.substring(0, i + 1);
+        
+        // Aplicar highlight letra por letra mientras se escribe "Omar"
+        const omarStartIndex = text.indexOf('Omar');
+        const omarEndIndex = omarStartIndex + 4; // "Omar" tiene 4 letras
+        
+        let formattedText = '';
+        
+        for (let j = 0; j < currentText.length; j++) {
+          const char = currentText[j];
+          
+          // Si estamos en la zona de "Omar", aplicar highlight
+          if (j >= omarStartIndex && j < omarEndIndex) {
+            formattedText += `<span class="highlight">${char}</span>`;
+          } else {
+            formattedText += char;
+          }
+        }
+        
+        typewriterElement.innerHTML = formattedText;
+        
+        i++;
+        // Velocidad más consistente con menos variación aleatoria
+        setTimeout(typeWriter, 85 + Math.random() * 30);
+      }
+      // El cursor sigue parpadeando automáticamente con CSS
+    }
+
+    // Iniciar animación de escritura
+    setTimeout(() => {
+      typeWriter();
+    }, 100);
   });
 </script>
